@@ -6,7 +6,6 @@ from uuid import uuid4
 
 class Card(Base):
 
-    id = models.CharField(uuid4(), primary_key=True, unique=True, max_length=50)
     name = models.CharField(max_length=256, null=False, blank=False, verbose_name='Name', default='whizdom')
     body = models.TextField(null=False, blank=False, verbose_name='Body', default='whizdom')
     headline = models.CharField(max_length=256, null=False, blank=False, verbose_name='Headline', default='whizdom')

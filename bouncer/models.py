@@ -1,10 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager, PermissionsMixin)
+from uuid import uuid4
 
 # Create your models here.
 class Base(models.Model):
     created = models.DateTimeField(auto_now_add=True, null=True)
     modified = models.DateTimeField(auto_now=True)
+    id = models.CharField(primary_key=True, default=str(uuid4()), editable=False, max_length=36, unique=True)
 
     class Meta:
         abstract = True
