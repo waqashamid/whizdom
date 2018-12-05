@@ -5,9 +5,19 @@ from django.shortcuts import render
 from rest_framework.settings import api_settings
 from .serializers import CardSerializer
 from .models import *
+from bouncer.models import *
 
-class FetchCards(views.APIView):
+class FetchUserCards(views.APIView):
 
     def get(self, request, **kwargs):
+        # Incorrect TODO: fix
+        try:
+            user = User.objects.get(id=str(kwargs.get(id)))
+        except (User.DoesNotExist, KeyError) as e:
+            return Response({"error" : str(e)}, status=status.HTTP_400_BAD_REQUEST)
         cards = Card.objects.all()
-        return Response([CardSerializer(card).data for card in cards], status=status.HTTP_200_OK)
+        filtered_cards = []
+        for card in cards:
+            if card not in user.cards_seen:
+                filtered_cards.append(card)
+        return Response([CardSerializer(card).data for card in filtered_cards], status=status.HTTP_200_OK)

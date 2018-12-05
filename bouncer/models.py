@@ -1,21 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager, PermissionsMixin)
-from uuid import uuid4
+from content.models import Card
+from .mixins import BaseModelMixin
 
 # Create your models here.
-class Base(models.Model):
-    created = models.DateTimeField(auto_now_add=True, null=True)
-    modified = models.DateTimeField(auto_now=True)
-    id = models.CharField(primary_key=True, default=str(uuid4()), editable=False, max_length=36, unique=True)
-
-    class Meta:
-        abstract = True
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, email, password,
-                     **extra_fields):
+    def _create_user(self, email, password, **extra_fields):
 
         if not email:
             raise ValueError('The given email must be set')
@@ -41,11 +34,12 @@ class UserManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
-class User(AbstractBaseUser, PermissionsMixin, Base):
+class User(AbstractBaseUser, PermissionsMixin, BaseModelMixin):
     email = models.EmailField(db_index=True, unique=True, max_length=255, verbose_name='email')
     is_staff = models.BooleanField(default=False, verbose_name='Staff')
     is_superuser = models.BooleanField(default=False, verbose_name='Superuser')
     is_active = models.BooleanField(default=False, verbose_name='Active')
+    cards_seen = models.ManyToManyField(Card)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
