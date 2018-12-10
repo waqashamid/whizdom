@@ -1,9 +1,11 @@
-from django.contrib import admin
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from .models import *
 from django.contrib.auth.models import Group
+
+from .models import *
+
 
 class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
@@ -58,7 +60,8 @@ class UserAdmin(BaseUserAdmin):
     # The fields to be used in displaying the User model.
     # These override the definitions on the base UserAdmin
     # that reference specific fields on auth.User.
-    list_display = ('email', 'is_staff', 'is_superuser', 'is_active')
+    list_display = ('email', 'is_staff', 'is_superuser', 'is_active', 'id')
+    # list_display_links = ('id',)
     list_filter = ('is_staff',)
     fieldsets = (
         (None, {'fields': ('email', 'password', 'id', )}),
@@ -75,6 +78,7 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
+    readonly_fields = ('id',)
 
 admin.site.register(User)
 admin.site.unregister(Group)

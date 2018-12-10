@@ -23,7 +23,7 @@ class Card(BaseModelMixin):
     name = models.CharField(max_length=256, null=False, blank=False, verbose_name='Name', default='whizdom')
     body = models.TextField(null=False, blank=False, verbose_name='Body', default='whizdom')
     headline = models.CharField(max_length=256, null=False, blank=False, verbose_name='Headline', default='whizdom')
-    media = models.ManyToManyField(Media, verbose_name='Media')
+    media = models.ManyToManyField(Media, verbose_name='Media', blank=True)
 
     def __str__(self):
         return self.name
