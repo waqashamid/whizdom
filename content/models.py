@@ -6,10 +6,14 @@ class Media(BaseModelMixin):
     """
     Holds the media being used in the platform
     """
+    def get_media_path(self, instance):
+        import imghdr
+        return "media/{}/{}.{}".format(self.id, self.name, imghdr.what(instance))
+
     name = models.CharField(max_length=256, null=False, blank=False, verbose_name='Name', default='whizdom')
     is_image = models.BooleanField(default=False, verbose_name='is_image')
     is_video = models.BooleanField(default=False, verbose_name='is_video')
-    image = models.ImageField(null=True, blank=True, verbose_name='Image')
+    image = models.ImageField(upload_to=get_media_path, null=True, blank=True, verbose_name='Image')
     video = models.TextField(null=True, blank=True, verbose_name='Video')
 
     def __str__(self):

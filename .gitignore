@@ -108,3 +108,6 @@ venv.bak/
 .idea/
 
 bin/.env
+
+# Media dir
+media/

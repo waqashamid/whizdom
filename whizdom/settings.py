@@ -9,23 +9,24 @@ https://docs.djangoproject.com/en/2.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
-
 import os
+import dj_database_url
+from envparse import env
+import warnings
 
-env = os.environ.copy()
-# SECRET_KEY = env['SECRET_KEY']
-
-import os
+# Read in our environment variables
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    env.read_envfile()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '!^tju8^%sa35+@v_vj*6$topxorfwhg*wwe6*r6!3wte9c8rsa'
+SECRET_KEY = os.environ.get('DATABASE_URL')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -35,6 +36,7 @@ ALLOWED_HOSTS = []
 # Static directories
 STATIC_URL = '/static/'
 STATIC_ROOT = 'static'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Application definition
 
@@ -85,13 +87,17 @@ AUTH_USER_MODEL = 'bouncer.User'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if dj_database_url.parse(os.environ.get('DATABASE_URL')):
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL')),
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
@@ -129,8 +135,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_URL = '/static/'
-
 # REST_FRAMEWORK = {
 #     'DEFAULT_PERMISSION_CLASSES': (
 #         'rest_framework.permissions.IsAuthenticated',
@@ -143,6 +147,7 @@ STATIC_URL = '/static/'
 # }
 
 # Caching with Redis
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
